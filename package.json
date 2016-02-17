@@ -14,5 +14,12 @@
   ],
   "author": "",
   "license": "MIT",
-  "readmeFilename": "README.md"
+  "readmeFilename": "README.md",
+  "dependencies": {
+    "formidable": "^1.0.17",
+    "htmlparser": "^1.7.7",
+    "mysql": "^2.10.2",
+    "nimble": "0.0.2",
+    "request": "^2.69.0"
+  }
 }

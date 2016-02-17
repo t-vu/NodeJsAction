@@ -37,7 +37,8 @@ function upload(req, res) {
 	form.parse(req, function(err, fields, files){
 		console.log(fields);
 		console.log(files);
-		res.end("Upload completed !");
+//		files.pipe(res);
+		res.end("Upload completed");
 	});
 	form.on("progress", function(bytesReceived, bytesExpected){
 		console.log(bytesReceived + " vs " + bytesExpected);

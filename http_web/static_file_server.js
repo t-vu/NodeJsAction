@@ -46,8 +46,8 @@ var server = http.createServer(function(req, res) {
 });
 
 server.listen(3000);
-//var readStream = fs.createReadStream(__dirname + "/" + "original.txt");
-//var writeStream = fs.createWriteStream(__dirname + "/" + "copy.txt");
-//readStream.pipe(writeStream);
+var readStream = fs.createReadStream(__dirname + "/" + "original.txt");
+var writeStream = fs.createWriteStream(__dirname + "/" + "copy.txt");
+readStream.pipe(writeStream);
 
 console.log("server listening at 3000...");
