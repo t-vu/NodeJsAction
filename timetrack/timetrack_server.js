@@ -3,6 +3,7 @@ var work = require('./lib/timetrack');
 var mysql = require('mysql');
 
 var db = mysql.createConnection({
+  debug: true,
   host:     '127.0.0.1',
   user:     'root',
   password: '',
@@ -10,6 +11,7 @@ var db = mysql.createConnection({
 });
 
 var server = http.createServer(function(req, res) {
+	console.log(req.url);
   switch (req.method) {
     case 'POST': 
       switch(req.url) {
@@ -22,6 +24,10 @@ var server = http.createServer(function(req, res) {
         case '/delete':
           work.delete(db, req, res);
           break;
+        case '/search':
+        	console.log("searching...");
+          work.showSearch(db,req,res);
+          break;
       }
       break;
     case 'GET': 
@@ -31,6 +37,8 @@ var server = http.createServer(function(req, res) {
           break;
         case '/archived':
           work.showArchived(db, res);
+          break;
+
       }
       break;
   }

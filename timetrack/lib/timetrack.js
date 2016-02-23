@@ -65,6 +65,21 @@ exports.archive = function(db, req, res) {
   });
 };
 
+exports.showSearch = function(db, req, res){
+	exports.parseReceivedData(req, function(work){
+		db.query("Select * From work "+ "Where description LIKE ?",
+				["%"+work.description +"%"],
+				function(err, rows){
+			if(err) throw err;
+			  html =  '<a href="/search">Result Work</a><br/>';
+		      html += exports.workHitlistHtml(rows); 
+		      html += exports.workFormHtml();
+		      html += exports.workSearchForm("search", "Search");
+		      exports.sendHtml(res, html); 
+		});
+	});
+}
+
 exports.show = function(db, res, showArchived) {
   var query = "SELECT * FROM work " + 
     "WHERE archived=? " +
@@ -80,6 +95,7 @@ exports.show = function(db, res, showArchived) {
         : '<a href="/archived">Archived Work</a><br/>';
       html += exports.workHitlistHtml(rows); 
       html += exports.workFormHtml();
+      html += exports.workSearchForm("search", "Search");
       exports.sendHtml(res, html); 
     }
   );
@@ -123,4 +139,13 @@ exports.workArchiveForm = function(id) {
 
 exports.workDeleteForm = function(id) { 
   return exports.actionForm(id, '/delete', 'Delete');
+}
+
+
+exports.workSearchForm = function(search_path, label){ 
+	  var html = '<form method="POST" action="' + search_path + '">' +
+	    '<input type="text" name="description">' +
+	    '<input type="submit" value="' + label + '" />' +
+	    '</form>';
+	  return html;
 }
