@@ -35,8 +35,10 @@ app.use(function(req, res, next) {
 	next(err);
 });
 
-// error handlers
 
+// error handlers
+//app.set('view engine', 'jade');
+console.log(app.get("env"));
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
@@ -58,6 +60,11 @@ app.use(function(err, req, res, next) {
 		error : {}
 	});
 });
+
+
+var photos = require('./routes/photos');
+app.use('/photos', photos);
+
 
 app.set('port',3000)
 module.exports = app;
