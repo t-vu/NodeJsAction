@@ -16,36 +16,52 @@ photos.push({
 	path : 'http://nodejs.org/images/ryan-speaker.jpg'
 });
 
-exports.list = function(req, res){
-	res.render('photos/index',{
-		title: "Photos",
-		photos: photos,
-	} )
-}
-exports.form = function(req, res){
-	res.render("photos/upload",{
-		title: "Photo Upload"
+
+exports.list = function(req, res, next) {
+	Photo.find({}, function(err, photos) {
+		console.log(photos)
+		if (err)
+			return next(err);
+		res.render('photos/index', {
+			title : 'Photos',
+			photos : photos
+		});
+	});
+};
+
+exports.form = function(req, res) {
+	res.render("photos/upload", {
+		title : "Photo Upload"
 	})
 }
 
-exports.submit = function (dir) {
-	  return function(req, res, next){
-		console.log(req)
-	    var img = req.files.photo.image;
-	    console.log("submit");
-	    var name = req.body.photo.name || img.name;
-	    var path = join(dir, img.name);
+var multer = require("multer");
+var storage = multer.diskStorage({
+	destination : function(req, file, cb) {
+		cb(null, './public/photos')
+	},
+	filename : function(req, file, cb) {
+		cb(null, file.originalname)
+	}
+})
+var upload = multer({
+	storage : storage
+})
 
-	    fs.rename(img.path, path, function(err){
-	      if (err) return next(err);
-
-	      Photo.create({
-	        name: name,
-	        path: img.name
-	      }, function(err) {
-	        if (err) return next(err);
-	        res.redirect('/');
-	      });
-	    });
-	  };
+exports.submit = function(dir) {
+	return function(req, res, next) {
+		var img = req.file;
+		console.log(img);
+		var name = req.body.photo.name || img.fieldname;
+		console.log(name);
+		Photo.create({
+			name : name,
+			path : "/photos/"+img.filename,
+		}, function(err) {
+			if (err)
+				return next(err);
+			res.redirect('/photos');
+		});
 	};
+};
+exports.upload = upload.single('photo[image]');

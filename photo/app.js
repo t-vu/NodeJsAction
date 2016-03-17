@@ -8,16 +8,6 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
-var multer = require("multer");
-var storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, './public/photos')
-    },
-    filename: function (req, file, cb) {
-        cb(null, file.originalname)
-  }
-})
-var upload = multer({storage : storage})
 
 var app = express();
 
@@ -51,13 +41,7 @@ app.get("/test", function(req, res){
 app.get('/photos/upload', photos.form);
 //app.post('/photos/upload', photos.submit(app.get('photos')));
 
-app.post('/photos/upload', upload.single('photo[image]'), function (req, res, next) {
-	console.log(req.file);
-	console.log(req.body);
-	res.end("successfully updated!");
-	  // req.file is the `avatar` file
-	  // req.body will hold the text fields, if there were any
-	})
+app.post('/photos/upload',photos.upload, photos.submit(app.get('photos')));
 
 
 // catch 404 and forward to error handler
