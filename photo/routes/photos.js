@@ -1,6 +1,11 @@
 /**
  * http://usejsdoc.org/
  */
+var Photo = require('../models/Photo');
+var path = require('path');
+var fs = require('fs');
+var join = path.join;
+
 var photos = [];
 photos.push({
 	name : 'Node.js Logo',
@@ -12,16 +17,35 @@ photos.push({
 });
 
 exports.list = function(req, res){
-	res.render('photos',{
+	res.render('photos/index',{
 		title: "Photos",
 		photos: photos,
 	} )
 }
+exports.form = function(req, res){
+	res.render("photos/upload",{
+		title: "Photo Upload"
+	})
+}
 
-var express = require('express');
-var router = express.Router();
+exports.submit = function (dir) {
+	  return function(req, res, next){
+		console.log(req)
+	    var img = req.files.photo.image;
+	    console.log("submit");
+	    var name = req.body.photo.name || img.name;
+	    var path = join(dir, img.name);
 
-/* GET home page. */
-router.get('/',exports.list );
+	    fs.rename(img.path, path, function(err){
+	      if (err) return next(err);
 
-module.exports = router;
+	      Photo.create({
+	        name: name,
+	        path: img.name
+	      }, function(err) {
+	        if (err) return next(err);
+	        res.redirect('/');
+	      });
+	    });
+	  };
+	};
